@@ -1,0 +1,137 @@
+/* 
+ Soil Moisture Sensor  
+ modified on 21 Feb 2019 
+ by Saeed Hosseini @ Electropeak 
+ https://electropeak.com/learn/ 
+*/
+#define SensorPin A0 
+float sensorValue = 0; 
+void setup() { 
+ Serial.begin(9600); 
+} 
+void loop() { 
+ for (int i = 0; i <= 100; i++) 
+ { 
+   sensorValue = sensorValue + analogRead(SensorPin); 
+   delay(1); 
+ } 
+ sensorValue = sensorValue/100.0; 
+ Serial.println(sensorValue); 
+ delay(30); 
+} 
+/*gsm module*/
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(9, 10);
+
+void setup()
+{
+  mySerial.begin(9600);   // Setting the baud rate of GSM Module  
+  Serial.begin(9600);    // Setting the baud rate of Serial Monitor (Arduino)
+  delay(100);
+}
+
+
+void loop()
+{
+  if (Serial.available()>0)
+   switch(Serial.read())
+  {
+    case 's':
+      SendMessage();
+      break;
+    case 'r':
+      RecieveMessage();
+      break;
+  }
+
+ if (mySerial.available()>0)
+   Serial.write(mySerial.read());
+}
+
+
+ void SendMessage()
+{
+  mySerial.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+  delay(1000);  // Delay of 1000 milli seconds or 1 second
+  mySerial.println("AT+CMGS=\"+91xxxxxxxxxx\"\r"); // Replace x with mobile number
+  delay(1000);
+  mySerial.println("I am SMS from GSM Module");// The SMS text you want to send
+  delay(100);
+   mySerial.println((char)26);// ASCII code of CTRL+Z
+  delay(1000);
+}
+
+
+ void RecieveMessage()
+{
+  mySerial.println("AT+CNMI=2,2,0,0,0"); // AT Command to receive a live SMS
+  delay(1000);
+ }
+/*gas sensor*/
+int sensorValue;
+int digitalValue;
+void setup()
+{
+
+Serial.begin(9600); // sets the serial port to 9600
+pinMode(13, OUTPUT);
+pinMode( 3, INPUT);
+
+}
+
+
+void loop()
+
+{
+
+sensorValue = analogRead(0); // read analog input pin 0
+
+digitalValue = digitalRead(2); 
+if(sensorValue>400)
+{
+digitalWrite(13, HIGH);
+}
+else
+digitalWrite(13, LOW);
+Serial.println(sensorValue, DEC); // prints the value read
+Serial.println(digitalValue, DEC);
+
+delay(1000); // wait 100ms for next reading
+
+}
+/*water pump*/
+// constants won't change
+const int RELAY_PIN = A5;  // the Arduino pin, which connects to the IN pin of relay
+
+// the setup function runs once when you press reset or power the board
+void setup() {
+  // initialize digital pin A5 as an output.
+  pinMode(RELAY_PIN, OUTPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+  digitalWrite(RELAY_PIN, HIGH); // turn on pump 5 seconds
+  delay(5000);
+  digitalWrite(RELAY_PIN, LOW);  // turn off pump 5 seconds
+  delay(5000);
+}
+/*water level sensor*/
+// constants won't change
+const int RELAY_PIN = A5;  // the Arduino pin, which connects to the IN pin of relay
+
+// the setup function runs once when you press reset or power the board
+void setup() {
+  // initialize digital pin A5 as an output.
+  pinMode(RELAY_PIN, OUTPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+  digitalWrite(RELAY_PIN, HIGH); // turn on pump 5 seconds
+  delay(5000);
+  digitalWrite(RELAY_PIN, LOW);  // turn off pump 5 seconds
+  delay(5000);
+}
+ 
